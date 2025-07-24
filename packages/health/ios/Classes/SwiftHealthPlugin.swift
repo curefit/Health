@@ -793,6 +793,7 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
                     "date_to": Int(dateTo.timeIntervalSince1970 * 1000),
                     "source_id": sourceIdForCharacteristic,
                     "source_name": sourceNameForCharacteristic,
+                    "device_type": "iPhone",
                     "recording_method": RecordingMethod.manual.rawValue
                 ]
             ])
@@ -806,6 +807,7 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
                     "date_to": Int(dateTo.timeIntervalSince1970 * 1000),
                     "source_id": sourceIdForCharacteristic,
                     "source_name": sourceNameForCharacteristic,
+                    "device_type": "iPhone",
                     "recording_method": RecordingMethod.manual.rawValue
                 ]
             ])
@@ -819,6 +821,7 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
                     "date_to": Int(dateTo.timeIntervalSince1970 * 1000),
                     "source_id": sourceIdForCharacteristic,
                     "source_name": sourceNameForCharacteristic,
+                    "device_type": "iPhone",
                     "recording_method": RecordingMethod.manual.rawValue
                 ]
             ])
@@ -851,6 +854,7 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
                         "date_to": Int(sample.endDate.timeIntervalSince1970 * 1000),
                         "source_id": sample.sourceRevision.source.bundleIdentifier,
                         "source_name": sample.sourceRevision.source.name,
+                        "device_type": sample.device?.name ?? "iPhone",
                         "recording_method": (sample.metadata?[HKMetadataKeyWasUserEntered] as? Bool == true)
                             ? RecordingMethod.manual.rawValue
                             : RecordingMethod.automatic.rawValue,
@@ -912,6 +916,7 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
                         "date_to": Int(sample.endDate.timeIntervalSince1970 * 1000),
                         "source_id": sample.sourceRevision.source.bundleIdentifier,
                         "source_name": sample.sourceRevision.source.name,
+                        "device_type": sample.device?.model ?? "iPhone",
                         "recording_method": (sample.metadata?[HKMetadataKeyWasUserEntered] as? Bool == true) ? RecordingMethod.manual.rawValue : RecordingMethod.automatic.rawValue,
                         "metadata": metadata
                     ]
@@ -936,6 +941,7 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
                         "date_to": Int(sample.endDate.timeIntervalSince1970 * 1000),
                         "source_id": sample.sourceRevision.source.bundleIdentifier,
                         "source_name": sample.sourceRevision.source.name,
+                        "device_type": sample.device?.model ?? "iPhone",
                         "recording_method": (sample.metadata?[HKMetadataKeyWasUserEntered] as? Bool == true) ? RecordingMethod.manual.rawValue : RecordingMethod.automatic.rawValue,
                         "workout_type": self.getWorkoutType(type: sample.workoutActivityType),
                         "total_distance": sample.totalDistance != nil ? Int(sample.totalDistance!.doubleValue(for: HKUnit.meter())) : 0,
@@ -968,6 +974,7 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
                         "date_to": Int(sample.endDate.timeIntervalSince1970 * 1000),
                         "source_id": sample.sourceRevision.source.bundleIdentifier,
                         "source_name": sample.sourceRevision.source.name,
+                        "device_type": sample.device?.model ?? "iPhone",
                     ]
                 }
                 DispatchQueue.main.async {
@@ -990,6 +997,7 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
                             "date_to": Int(sample.endDate.timeIntervalSince1970 * 1000),
                             "source_id": sample.sourceRevision.source.bundleIdentifier,
                             "source_name": sample.sourceRevision.source.name,
+                            "device_type": sample.device?.model ?? "iPhone",
                             "recording_method": (sample.metadata?[HKMetadataKeyWasUserEntered] as? Bool == true)
                                 ? RecordingMethod.manual.rawValue
                                 : RecordingMethod.automatic.rawValue
@@ -1061,6 +1069,7 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
             "date_to": Int(sample.endDate.timeIntervalSince1970 * 1000),
             "source_id": sample.sourceRevision.source.bundleIdentifier,
             "source_name": sample.sourceRevision.source.name,
+            "device_type": sample.device?.model ?? "iPhone",
         ]
     }
     
@@ -1137,7 +1146,8 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
                             "date_from": Int(statisticData.startDate.timeIntervalSince1970 * 1000),
                             "date_to": Int(statisticData.endDate.timeIntervalSince1970 * 1000),
                             "source_id": statisticData.sources?.first?.bundleIdentifier ?? "",
-                            "source_name": statisticData.sources?.first?.name ?? ""
+                            "source_name": statisticData.sources?.first?.name ?? "",
+                            "device_type": "iPhone"
                         ]
                         dictionaries.append(dict)
                     }

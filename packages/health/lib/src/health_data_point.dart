@@ -45,7 +45,9 @@ class HealthDataPoint {
   String sourceName;
 
   /// The type of device from which the data point was fetched.
-  HealthDeviceType deviceType;
+  /// On Android: String (device model name)
+  /// On iOS: String (device model name)
+  dynamic deviceType;
 
   /// How the data point was recorded
   /// (on Android: https://developer.android.com/reference/kotlin/androidx/health/connect/client/records/metadata/Metadata#summary)
@@ -69,7 +71,7 @@ class HealthDataPoint {
     required this.sourceDeviceId,
     required this.sourceId,
     required this.sourceName,
-    this.deviceType = HealthDeviceType.unknown,
+    this.deviceType,
     this.recordingMethod = RecordingMethod.unknown,
     this.workoutSummary,
     this.metadata,
@@ -102,15 +104,30 @@ class HealthDataPoint {
               (1000 * 60));
 
   /// Parse device type from string or numeric value
-  static HealthDeviceType _parseDeviceType(String deviceTypeString) {
-    // Try to parse as integer first (Android Health Connect)
-    final int? numericValue = int.tryParse(deviceTypeString);
-    if (numericValue != null) {
-      return HealthDeviceType.fromValue(numericValue);
+  static dynamic _parseDeviceType(dynamic deviceTypeData) {
+    if (deviceTypeData == null) {
+      return HealthDeviceType.unknown;
     }
     
-    // Try to parse as string (iOS or fallback)
-    return HealthDeviceType.fromString(deviceTypeString);
+    // Handle Android (numeric values)
+    if (deviceTypeData is int) {
+      return HealthDeviceType.fromValue(deviceTypeData);
+    }
+    
+    // Handle iOS (string values)
+    if (deviceTypeData is String) {
+      // Try to parse as integer first (in case Android sends string)
+      final int? numericValue = int.tryParse(deviceTypeData);
+      if (numericValue != null) {
+        return HealthDeviceType.fromValue(numericValue);
+      }
+      
+      // Return the string as-is for iOS device model names
+      return deviceTypeData;
+    }
+    
+    // Fallback
+    return HealthDeviceType.unknown;
   }
 
   /// Create a [HealthDataPoint] from json.
@@ -148,8 +165,8 @@ class HealthDataPoint {
         DateTime.fromMillisecondsSinceEpoch(dataPoint['date_to'] as int);
     final String sourceId = dataPoint["source_id"] as String;
     final String sourceName = dataPoint["source_name"] as String;
-    final String deviceTypeString = dataPoint["device_type"] as String? ?? "UNKNOWN";
-    final HealthDeviceType deviceType = _parseDeviceType(deviceTypeString);
+    final dynamic deviceTypeData = dataPoint["device_type"];
+    final dynamic deviceType = _parseDeviceType(deviceTypeData);
     final Map<String, dynamic>? metadata = dataPoint["metadata"] == null
         ? null
         : Map<String, dynamic>.from(dataPoint['metadata'] as Map);
@@ -197,7 +214,7 @@ class HealthDataPoint {
     deviceId: $sourceDeviceId,
     sourceId: $sourceId,
     sourceName: $sourceName,
-    deviceType: ${deviceType.displayName},
+    deviceType: ${deviceType is HealthDeviceType ? deviceType.displayName : deviceType},
     recordingMethod: $recordingMethod,
     workoutSummary: $workoutSummary,
     metadata: $metadata""";
@@ -215,11 +232,31 @@ class HealthDataPoint {
       sourceDeviceId == other.sourceDeviceId &&
       sourceId == other.sourceId &&
       sourceName == other.sourceName &&
-      deviceType == other.deviceType &&
       recordingMethod == other.recordingMethod &&
       metadata == other.metadata;
 
   @override
   int get hashCode => Object.hash(uuid, value, unit, dateFrom, dateTo, type,
-      sourcePlatform, sourceDeviceId, sourceId, sourceName, deviceType, metadata);
+      sourcePlatform, sourceDeviceId, sourceId, sourceName, 
+      deviceType is HealthDeviceType ? deviceType.displayName : deviceType, metadata);
+
+  /// Get device type as string (works for both platforms)
+  String get deviceTypeString {
+    if (deviceType is HealthDeviceType) {
+      return (deviceType as HealthDeviceType).displayName;
+    }
+    return deviceType?.toString() ?? "UNKNOWN";
+  }
+
+  /// Get device type as enum (Android only, returns unknown for iOS)
+  HealthDeviceType get deviceTypeEnum {
+    if (deviceType is HealthDeviceType) {
+      return deviceType as HealthDeviceType;
+    }
+    return HealthDeviceType.unknown;
+  }
+
+  /// Check if device type is from iOS (string) or Android (enum)
+  bool get isIOSDeviceType => deviceType is String;
+  bool get isAndroidDeviceType => deviceType is HealthDeviceType;
 }

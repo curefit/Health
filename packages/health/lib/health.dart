@@ -76,3 +76,77 @@ enum HealthDeviceType {
     }
   }
 }
+
+/// Extract device type from device model string
+/// Used to categorize iOS device models into device types
+String extractDeviceTypeFromModel(String? deviceModel) {
+  if (deviceModel == null || deviceModel.isEmpty) {
+    return "iPhone";
+  }
+  
+  final lowercased = deviceModel.toLowerCase();
+  
+  // Apple Watch detection
+  if (lowercased.contains("watch")) {
+    return "Watch";
+  }
+  
+  // iPhone detection
+  if (lowercased.contains("iphone")) {
+    return "iPhone";
+  }
+  
+  // iPad detection
+  if (lowercased.contains("ipad")) {
+    return "iPad";
+  }
+  
+  // Mac detection
+  if (lowercased.contains("mac")) {
+    return "Mac";
+  }
+  
+  // Scale detection
+  if (lowercased.contains("scale") || 
+      lowercased.contains("withings") ||
+      lowercased.contains("fitbit aria")) {
+    return "Scale";
+  }
+  
+  // Ring detection (Oura, etc.)
+  if (lowercased.contains("ring") || 
+      lowercased.contains("oura")) {
+    return "Ring";
+  }
+  
+  // Head mounted devices (VR, AR, etc.)
+  if (lowercased.contains("head") || 
+      lowercased.contains("vr") || 
+      lowercased.contains("ar")) {
+    return "HeadMounted";
+  }
+  
+  // Fitness band detection
+  if (lowercased.contains("band") || 
+      lowercased.contains("fitbit") ||
+      lowercased.contains("mi band")) {
+    return "FitnessBand";
+  }
+  
+  // Chest strap detection
+  if (lowercased.contains("chest") || 
+      lowercased.contains("strap") ||
+      lowercased.contains("polar") ||
+      lowercased.contains("garmin")) {
+    return "ChestStrap";
+  }
+  
+  // Smart display detection
+  if (lowercased.contains("display") || 
+      lowercased.contains("tv")) {
+    return "SmartDisplay";
+  }
+  
+  // Default to iPhone if we can't determine the type
+  return "iPhone";
+}
