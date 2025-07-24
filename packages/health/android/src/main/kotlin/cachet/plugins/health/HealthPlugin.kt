@@ -811,7 +811,7 @@ class HealthPlugin(private var channel: MethodChannel? = null) :
                                                 }
                                                 .keys
                                                 .firstOrNull()
-                                                ?: "OTHER"),
+                                                ?: "UNKNOWN"),
                                     "totalDistance" to
                                             if (totalDistance ==
                                                 0.0
@@ -850,6 +850,8 @@ class HealthPlugin(private var channel: MethodChannel? = null) :
                                             record.metadata
                                                 .dataOrigin
                                                 .packageName,
+                                    "device_type" to (record.metadata.device?.type?.toString() ?: "UNKNOWN"),
+                                    "device_model" to (record.metadata.device?.let { "${it.manufacturer} ${it.model}" } ?: "UNKNOWN"),
                                 ),
                             )
                         }
@@ -932,6 +934,8 @@ class HealthPlugin(private var channel: MethodChannel? = null) :
                 "date_to" to stage.endTime.toEpochMilli(),
                 "source_id" to "",
                 "source_name" to sourceName,
+                "device_type" to (metadata.device?.type?.toString() ?: "UNKNOWN"),
+                "device_model" to (metadata.device?.let { "${it.manufacturer} ${it.model}" } ?: "UNKNOWN"),
             ),
         )
     }
@@ -993,7 +997,9 @@ class HealthPlugin(private var channel: MethodChannel? = null) :
                                 "is_manual_entry" to
                                         packageNames.contains(
                                             "user_input"
-                                        )
+                                        ),
+                                "device_type" to "UNKNOWN",
+                                "device_model" to "UNKNOWN"
                             )
                         healthConnectData.add(data)
                     }
@@ -1033,7 +1039,9 @@ class HealthPlugin(private var channel: MethodChannel? = null) :
                                 metadata.dataOrigin
                                     .packageName,
                         "recording_method" to
-                                        metadata.recordingMethod
+                                        metadata.recordingMethod,
+                        "device_type" to (metadata.device?.type?.toString() ?: "UNKNOWN"),
+                        "device_model" to (metadata.device?.let { "${it.manufacturer} ${it.model}" } ?: "UNKNOWN")
                     ),
                 )
 
@@ -1056,7 +1064,9 @@ class HealthPlugin(private var channel: MethodChannel? = null) :
                                 metadata.dataOrigin
                                     .packageName,
                         "recording_method" to
-                                        metadata.recordingMethod
+                                        metadata.recordingMethod,
+                        "device_type" to (metadata.device?.type?.toString() ?: "UNKNOWN"),
+                        "device_model" to (metadata.device?.let { "${it.manufacturer} ${it.model}" } ?: "UNKNOWN")
                     ),
                 )
 
@@ -1079,7 +1089,9 @@ class HealthPlugin(private var channel: MethodChannel? = null) :
                                 metadata.dataOrigin
                                     .packageName,
                         "recording_method" to
-                                        metadata.recordingMethod
+                                        metadata.recordingMethod,
+                        "device_type" to (metadata.device?.type?.toString() ?: "UNKNOWN"),
+                        "device_model" to (metadata.device?.let { "${it.manufacturer} ${it.model}" } ?: "UNKNOWN")
                     ),
                 )
 
@@ -1100,7 +1112,9 @@ class HealthPlugin(private var channel: MethodChannel? = null) :
                                 metadata.dataOrigin
                                     .packageName,
                         "recording_method" to
-                                        metadata.recordingMethod
+                                        metadata.recordingMethod,
+                        "device_type" to (metadata.device?.type?.toString() ?: "UNKNOWN"),
+                        "device_model" to (metadata.device?.let { "${it.manufacturer} ${it.model}" } ?: "UNKNOWN")
                     ),
                 )
 
@@ -1123,7 +1137,9 @@ class HealthPlugin(private var channel: MethodChannel? = null) :
                                 metadata.dataOrigin
                                     .packageName,
                         "recording_method" to
-                                        metadata.recordingMethod
+                                        metadata.recordingMethod,
+                        "device_type" to (metadata.device?.type?.toString() ?: "UNKNOWN"),
+                        "device_model" to (metadata.device?.let { "${it.manufacturer} ${it.model}" } ?: "UNKNOWN")
                     ),
                 )
 
@@ -1141,7 +1157,9 @@ class HealthPlugin(private var channel: MethodChannel? = null) :
                                 metadata.dataOrigin
                                     .packageName,
                         "recording_method" to
-                                        metadata.recordingMethod
+                                        metadata.recordingMethod,
+                        "device_type" to (metadata.device?.type?.toString() ?: "UNKNOWN"),
+                        "device_model" to (metadata.device?.let { "${it.manufacturer} ${it.model}" } ?: "UNKNOWN")
                     )
                 }
 
@@ -1163,7 +1181,9 @@ class HealthPlugin(private var channel: MethodChannel? = null) :
                                 metadata.dataOrigin
                                     .packageName,
                         "recording_method" to
-                                        metadata.recordingMethod
+                                        metadata.recordingMethod,
+                        "device_type" to (metadata.device?.type?.toString() ?: "UNKNOWN"),
+                        "device_model" to (metadata.device?.let { "${it.manufacturer} ${it.model}" } ?: "UNKNOWN")
                     ),
                 )
 
@@ -1186,7 +1206,9 @@ class HealthPlugin(private var channel: MethodChannel? = null) :
                                 metadata.dataOrigin
                                     .packageName,
                         "recording_method" to
-                                        metadata.recordingMethod
+                                        metadata.recordingMethod,
+                        "device_type" to (metadata.device?.type?.toString() ?: "UNKNOWN"),
+                        "device_model" to (metadata.device?.let { "${it.manufacturer} ${it.model}" } ?: "UNKNOWN")
                     ),
                 )
 
@@ -1209,7 +1231,9 @@ class HealthPlugin(private var channel: MethodChannel? = null) :
                                 metadata.dataOrigin
                                     .packageName,
                         "recording_method" to
-                                        metadata.recordingMethod
+                                        metadata.recordingMethod,
+                        "device_type" to (metadata.device?.type?.toString() ?: "UNKNOWN"),
+                        "device_model" to (metadata.device?.let { "${it.manufacturer} ${it.model}" } ?: "UNKNOWN")
                     ),
                 )
 
@@ -1238,7 +1262,9 @@ class HealthPlugin(private var channel: MethodChannel? = null) :
                                 metadata.dataOrigin
                                     .packageName,
                         "recording_method" to
-                                        metadata.recordingMethod
+                                        metadata.recordingMethod,
+                        "device_type" to (metadata.device?.type?.toString() ?: "UNKNOWN"),
+                        "device_model" to (metadata.device?.let { "${it.manufacturer} ${it.model}" } ?: "UNKNOWN")
                     ),
                 )
 
@@ -1261,7 +1287,9 @@ class HealthPlugin(private var channel: MethodChannel? = null) :
                                 metadata.dataOrigin
                                     .packageName,
                         "recording_method" to
-                                        metadata.recordingMethod
+                                        metadata.recordingMethod,
+                        "device_type" to (metadata.device?.type?.toString() ?: "UNKNOWN"),
+                        "device_model" to (metadata.device?.let { "${it.manufacturer} ${it.model}" } ?: "UNKNOWN")
                     ),
                 )
 
@@ -1284,7 +1312,9 @@ class HealthPlugin(private var channel: MethodChannel? = null) :
                                 metadata.dataOrigin
                                     .packageName,
                         "recording_method" to
-                                        metadata.recordingMethod
+                                        metadata.recordingMethod,
+                        "device_type" to (metadata.device?.type?.toString() ?: "UNKNOWN"),
+                        "device_model" to (metadata.device?.let { "${it.manufacturer} ${it.model}" } ?: "UNKNOWN")
                     ),
                 )
 
@@ -1307,7 +1337,9 @@ class HealthPlugin(private var channel: MethodChannel? = null) :
                                 metadata.dataOrigin
                                     .packageName,
                         "recording_method" to
-                                        metadata.recordingMethod
+                                        metadata.recordingMethod,
+                        "device_type" to (metadata.device?.type?.toString() ?: "UNKNOWN"),
+                        "device_model" to (metadata.device?.let { "${it.manufacturer} ${it.model}" } ?: "UNKNOWN")
                     ),
                 )
 
@@ -1330,7 +1362,9 @@ class HealthPlugin(private var channel: MethodChannel? = null) :
                                 metadata.dataOrigin
                                     .packageName,
                         "recording_method" to
-                                        metadata.recordingMethod
+                                        metadata.recordingMethod,
+                        "device_type" to (metadata.device?.type?.toString() ?: "UNKNOWN"),
+                        "device_model" to (metadata.device?.let { "${it.manufacturer} ${it.model}" } ?: "UNKNOWN")
                     ),
                 )
 
@@ -1353,7 +1387,9 @@ class HealthPlugin(private var channel: MethodChannel? = null) :
                                 metadata.dataOrigin
                                     .packageName,
                         "recording_method" to
-                                        metadata.recordingMethod
+                                        metadata.recordingMethod,
+                        "device_type" to (metadata.device?.type?.toString() ?: "UNKNOWN"),
+                        "device_model" to (metadata.device?.let { "${it.manufacturer} ${it.model}" } ?: "UNKNOWN")
                     ),
                 )
 
@@ -1376,7 +1412,9 @@ class HealthPlugin(private var channel: MethodChannel? = null) :
                                 metadata.dataOrigin
                                     .packageName,
                         "recording_method" to
-                                        metadata.recordingMethod
+                                        metadata.recordingMethod,
+                        "device_type" to (metadata.device?.type?.toString() ?: "UNKNOWN"),
+                        "device_model" to (metadata.device?.let { "${it.manufacturer} ${it.model}" } ?: "UNKNOWN")
                     ),
                 )
 
@@ -1402,7 +1440,9 @@ class HealthPlugin(private var channel: MethodChannel? = null) :
                                 metadata.dataOrigin
                                     .packageName,
                         "recording_method" to
-                                        metadata.recordingMethod
+                                        metadata.recordingMethod,
+                        "device_type" to (metadata.device?.type?.toString() ?: "UNKNOWN"),
+                        "device_model" to (metadata.device?.let { "${it.manufacturer} ${it.model}" } ?: "UNKNOWN")
                     ),
                 )
 
@@ -1424,7 +1464,9 @@ class HealthPlugin(private var channel: MethodChannel? = null) :
                                 metadata.dataOrigin
                                     .packageName,
                         "recording_method" to
-                                        metadata.recordingMethod
+                                        metadata.recordingMethod,
+                        "device_type" to (metadata.device?.type?.toString() ?: "UNKNOWN"),
+                        "device_model" to (metadata.device?.let { "${it.manufacturer} ${it.model}" } ?: "UNKNOWN")
                     )
                 )
 
@@ -1445,7 +1487,9 @@ class HealthPlugin(private var channel: MethodChannel? = null) :
                                 metadata.dataOrigin
                                     .packageName,
                         "recording_method" to
-                                        metadata.recordingMethod
+                                        metadata.recordingMethod,
+                        "device_type" to (metadata.device?.type?.toString() ?: "UNKNOWN"),
+                        "device_model" to (metadata.device?.let { "${it.manufacturer} ${it.model}" } ?: "UNKNOWN")
                     )
                 )
 
@@ -1466,7 +1510,9 @@ class HealthPlugin(private var channel: MethodChannel? = null) :
                                 metadata.dataOrigin
                                     .packageName,
                         "recording_method" to
-                                        metadata.recordingMethod
+                                        metadata.recordingMethod,
+                        "device_type" to (metadata.device?.type?.toString() ?: "UNKNOWN"),
+                        "device_model" to (metadata.device?.let { "${it.manufacturer} ${it.model}" } ?: "UNKNOWN")
                     )
                 )
 
@@ -1532,7 +1578,9 @@ class HealthPlugin(private var channel: MethodChannel? = null) :
                                 metadata.dataOrigin
                                     .packageName,
                         "recording_method" to
-                                        metadata.recordingMethod
+                                        metadata.recordingMethod,
+                        "device_type" to (metadata.device?.type?.toString() ?: "UNKNOWN"),
+                        "device_model" to (metadata.device?.let { "${it.manufacturer} ${it.model}" } ?: "UNKNOWN")
                     )
                 )
 
@@ -1548,7 +1596,9 @@ class HealthPlugin(private var channel: MethodChannel? = null) :
                                 metadata.dataOrigin
                                     .packageName,
                         "recording_method" to
-                                        metadata.recordingMethod
+                                        metadata.recordingMethod,
+                        "device_type" to (metadata.device?.type?.toString() ?: "UNKNOWN"),
+                        "device_model" to (metadata.device?.let { "${it.manufacturer} ${it.model}" } ?: "UNKNOWN")
                     )
                 )
             // is ExerciseSessionRecord -> return listOf(mapOf<String, Any>("value" to ,
