@@ -139,7 +139,7 @@ class HealthDataConverter {
         "source_name" to metadata.dataOrigin.packageName,
         "recording_method" to metadata.recordingMethod,
         "device_type" to (metadata.device?.type?.toString() ?: "UNKNOWN"),
-        "device_model" to metadata.device?.let { "${it.manufacturer} ${it.model}" } ?: "UNKNOWN"
+        "device_model" to (metadata.device?.let { "${it.manufacturer} ${it.model}" } ?: "UNKNOWN")
     )
 
     /**
