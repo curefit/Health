@@ -47,9 +47,6 @@ class HealthDataPoint {
   /// The type of device from which the data point was fetched.
   String deviceType;
 
-  /// The model of device from which the data point was fetched.
-  String deviceModel;
-
   /// How the data point was recorded
   /// (on Android: https://developer.android.com/reference/kotlin/androidx/health/connect/client/records/metadata/Metadata#summary)
   /// on iOS: either user entered or manual https://developer.apple.com/documentation/healthkit/hkmetadatakeywasuserentered)
@@ -73,7 +70,6 @@ class HealthDataPoint {
     required this.sourceId,
     required this.sourceName,
     this.deviceType = "UNKNOWN",
-    this.deviceModel = "UNKNOWN",
     this.recordingMethod = RecordingMethod.unknown,
     this.workoutSummary,
     this.metadata,
@@ -141,7 +137,6 @@ class HealthDataPoint {
     final String sourceId = dataPoint["source_id"] as String;
     final String sourceName = dataPoint["source_name"] as String;
     final String deviceType = dataPoint["device_type"] as String? ?? "UNKNOWN";
-    final String deviceModel = dataPoint["device_model"] as String? ?? "UNKNOWN";
     final Map<String, dynamic>? metadata = dataPoint["metadata"] == null
         ? null
         : Map<String, dynamic>.from(dataPoint['metadata'] as Map);
@@ -171,7 +166,6 @@ class HealthDataPoint {
       sourceId: sourceId,
       sourceName: sourceName,
       deviceType: deviceType,
-      deviceModel: deviceModel,
       recordingMethod: RecordingMethod.fromInt(recordingMethod),
       workoutSummary: workoutSummary,
       metadata: metadata,
@@ -191,7 +185,6 @@ class HealthDataPoint {
     sourceId: $sourceId,
     sourceName: $sourceName,
     deviceType: $deviceType,
-    deviceModel: $deviceModel,
     recordingMethod: $recordingMethod,
     workoutSummary: $workoutSummary,
     metadata: $metadata""";
@@ -210,11 +203,10 @@ class HealthDataPoint {
       sourceId == other.sourceId &&
       sourceName == other.sourceName &&
       deviceType == other.deviceType &&
-      deviceModel == other.deviceModel &&
       recordingMethod == other.recordingMethod &&
       metadata == other.metadata;
 
   @override
   int get hashCode => Object.hash(uuid, value, unit, dateFrom, dateTo, type,
-      sourcePlatform, sourceDeviceId, sourceId, sourceName, deviceType, deviceModel, metadata);
+      sourcePlatform, sourceDeviceId, sourceId, sourceName, deviceType, metadata);
 }
