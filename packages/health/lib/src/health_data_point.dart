@@ -194,6 +194,7 @@ class HealthDataPoint {
     recordingMethod: $recordingMethod
     workoutSummary: $workoutSummary
     metadata: $metadata
+    deviceModel: $deviceModel
     deviceType: $deviceType""";
 
   @override
