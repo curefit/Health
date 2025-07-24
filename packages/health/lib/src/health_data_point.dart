@@ -56,9 +56,11 @@ class HealthDataPoint {
   Map<String, dynamic>? metadata;
 
   /// The source of the data, whether from the iPhone or Watch or something else.
-  /// Only available fo iOS
-  /// On Android: always return null
+  /// Only available for iOS and Android Health Connect
   String? deviceModel;
+
+  /// The type of device, e.g., 'iPhone', 'Watch', 'PHONE', 'WATCH', etc.
+  String? deviceType;
 
   HealthDataPoint({
     required this.uuid,
@@ -75,6 +77,7 @@ class HealthDataPoint {
     this.workoutSummary,
     this.metadata,
     this.deviceModel,
+    this.deviceType,
   }) {
     // set the value to minutes rather than the category
     // returned by the native API
@@ -144,6 +147,7 @@ class HealthDataPoint {
     final unit = dataTypeToUnit[dataType] ?? HealthDataUnit.UNKNOWN_UNIT;
     final String? uuid = dataPoint["uuid"] as String?;
     final String? deviceModel = dataPoint["device_model"] as String?;
+    final String? deviceType = dataPoint["device_type"] as String?;
 
     // Set WorkoutSummary, if available.
     WorkoutSummary? workoutSummary;
@@ -171,6 +175,7 @@ class HealthDataPoint {
       workoutSummary: workoutSummary,
       metadata: metadata,
       deviceModel: deviceModel,
+      deviceType: deviceType,
     );
   }
 
@@ -189,7 +194,8 @@ class HealthDataPoint {
     recordingMethod: $recordingMethod
     workoutSummary: $workoutSummary
     metadata: $metadata
-    deviceModel: $deviceModel""";
+    deviceModel: $deviceModel
+    deviceType: $deviceType""";
 
   @override
   bool operator ==(Object other) =>
@@ -206,9 +212,10 @@ class HealthDataPoint {
       sourceName == other.sourceName &&
       recordingMethod == other.recordingMethod &&
       metadata == other.metadata &&
-      deviceModel == other.deviceModel;
+      deviceModel == other.deviceModel &&
+      deviceType == other.deviceType;
 
   @override
   int get hashCode => Object.hash(uuid, value, unit, dateFrom, dateTo, type,
-      sourcePlatform, sourceDeviceId, sourceId, sourceName, metadata, deviceModel);
+      sourcePlatform, sourceDeviceId, sourceId, sourceName, metadata, deviceModel, deviceType);
 }
