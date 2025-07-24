@@ -45,7 +45,7 @@ class HealthDataPoint {
   String sourceName;
 
   /// The type of device from which the data point was fetched.
-  String deviceType;
+  HealthDeviceType deviceType;
 
   /// How the data point was recorded
   /// (on Android: https://developer.android.com/reference/kotlin/androidx/health/connect/client/records/metadata/Metadata#summary)
@@ -69,7 +69,7 @@ class HealthDataPoint {
     required this.sourceDeviceId,
     required this.sourceId,
     required this.sourceName,
-    this.deviceType = "UNKNOWN",
+    this.deviceType = HealthDeviceType.unknown,
     this.recordingMethod = RecordingMethod.unknown,
     this.workoutSummary,
     this.metadata,
@@ -100,6 +100,18 @@ class HealthDataPoint {
       numericValue:
           (dateTo.millisecondsSinceEpoch - dateFrom.millisecondsSinceEpoch) /
               (1000 * 60));
+
+  /// Parse device type from string or numeric value
+  static HealthDeviceType _parseDeviceType(String deviceTypeString) {
+    // Try to parse as integer first (Android Health Connect)
+    final int? numericValue = int.tryParse(deviceTypeString);
+    if (numericValue != null) {
+      return HealthDeviceType.fromValue(numericValue);
+    }
+    
+    // Try to parse as string (iOS or fallback)
+    return HealthDeviceType.fromString(deviceTypeString);
+  }
 
   /// Create a [HealthDataPoint] from json.
   factory HealthDataPoint.fromJson(Map<String, dynamic> json) =>
@@ -136,7 +148,8 @@ class HealthDataPoint {
         DateTime.fromMillisecondsSinceEpoch(dataPoint['date_to'] as int);
     final String sourceId = dataPoint["source_id"] as String;
     final String sourceName = dataPoint["source_name"] as String;
-    final String deviceType = dataPoint["device_type"] as String? ?? "UNKNOWN";
+    final String deviceTypeString = dataPoint["device_type"] as String? ?? "UNKNOWN";
+    final HealthDeviceType deviceType = _parseDeviceType(deviceTypeString);
     final Map<String, dynamic>? metadata = dataPoint["metadata"] == null
         ? null
         : Map<String, dynamic>.from(dataPoint['metadata'] as Map);
@@ -184,7 +197,7 @@ class HealthDataPoint {
     deviceId: $sourceDeviceId,
     sourceId: $sourceId,
     sourceName: $sourceName,
-    deviceType: $deviceType,
+    deviceType: ${deviceType.displayName},
     recordingMethod: $recordingMethod,
     workoutSummary: $workoutSummary,
     metadata: $metadata""";
