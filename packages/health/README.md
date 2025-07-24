@@ -222,6 +222,7 @@ String sourceId;
 String sourceName;
 RecordingMethod recordingMethod;
 WorkoutSummary? workoutSummary;
+String? deviceType;  // e.g., 'Watch', 'iPhone'
 ```
 
 where a [`HealthValue`](https://pub.dev/documentation/health/latest/health/HealthValue-class.html) can be any type of `AudiogramHealthValue`, `ElectrocardiogramHealthValue`, `ElectrocardiogramVoltageValue`, `NumericHealthValue`, `NutritionHealthValue`, or `WorkoutHealthValue`.
@@ -258,6 +259,23 @@ A `HealthDataPoint` object can be serialized to and from JSON using the `toJson(
   "recording_method": 2
 }
 ```
+
+#### Differentiating Data from iPhone vs Apple Watch
+
+On iOS, each health data point includes:
+- `deviceType`: The device model only (e.g., 'Watch', 'iPhone').
+
+You can use this field to filter or display data based on its originating device. For example:
+
+```dart
+if (dataPoint.deviceType == 'Watch') {
+  // This data came from an Apple Watch
+} else if (dataPoint.deviceType == 'iPhone') {
+  // This data came from the iPhone
+}
+```
+
+This field is only available on iOS. On Android, it will be null.
 
 ### Fetch health data
 

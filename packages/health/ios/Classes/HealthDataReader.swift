@@ -160,7 +160,8 @@ class HealthDataReader {
                         ? HealthConstants.RecordingMethod.manual.rawValue
                         : HealthConstants.RecordingMethod.automatic.rawValue,
                         "dataUnitKey": unit?.unitString,
-                        "metadata": HealthUtilities.sanitizeMetadata(sample.metadata)
+                        "metadata": HealthUtilities.sanitizeMetadata(sample.metadata),
+                        "device_type": sample.device?.model ?? "iPhone"
                     ]
                 }
                 DispatchQueue.main.async {
@@ -206,7 +207,8 @@ class HealthDataReader {
                         "recording_method": (sample.metadata?[HKMetadataKeyWasUserEntered] as? Bool == true)
                         ? HealthConstants.RecordingMethod.manual.rawValue
                         : HealthConstants.RecordingMethod.automatic.rawValue,
-                        "metadata": HealthUtilities.sanitizeMetadata(sample.metadata)
+                        "metadata": HealthUtilities.sanitizeMetadata(sample.metadata),
+                        "device_type": sample.device?.model ?? "iPhone"
                     ]
                 }
                 DispatchQueue.main.async {
@@ -232,7 +234,8 @@ class HealthDataReader {
                         : HealthConstants.RecordingMethod.automatic.rawValue,
                         "workout_type": HKWorkoutActivityType.toString(sample.workoutActivityType),
                         "total_distance": sample.totalDistance != nil ? Int(sample.totalDistance!.doubleValue(for: HKUnit.meter())) : 0,
-                        "total_energy_burned": sample.totalEnergyBurned != nil ? Int(sample.totalEnergyBurned!.doubleValue(for: HKUnit.kilocalorie())) : 0
+                        "total_energy_burned": sample.totalEnergyBurned != nil ? Int(sample.totalEnergyBurned!.doubleValue(for: HKUnit.kilocalorie())) : 0,
+                        "device_type": sample.device?.model ?? "iPhone"
                     ]
                 }
                 
@@ -260,6 +263,7 @@ class HealthDataReader {
                         "date_to": Int(sample.endDate.timeIntervalSince1970 * 1000),
                         "source_id": sample.sourceRevision.source.bundleIdentifier,
                         "source_name": sample.sourceRevision.source.name,
+                        "device_type": sample.device?.model ?? "iPhone"
                     ]
                 }
                 DispatchQueue.main.async {
@@ -414,7 +418,8 @@ class HealthDataReader {
                             "date_from": Int(statisticData.startDate.timeIntervalSince1970 * 1000),
                             "date_to": Int(statisticData.endDate.timeIntervalSince1970 * 1000),
                             "source_id": statisticData.sources?.first?.bundleIdentifier ?? "",
-                            "source_name": statisticData.sources?.first?.name ?? ""
+                            "source_name": statisticData.sources?.first?.name ?? "",
+                            "device_type": HealthUtilities.getDeviceModel()
                         ]
                         dictionaries.append(dict)
                     }
@@ -578,6 +583,7 @@ class HealthDataReader {
             "date_to": Int(sample.endDate.timeIntervalSince1970 * 1000),
             "source_id": sample.sourceRevision.source.bundleIdentifier,
             "source_name": sample.sourceRevision.source.name,
+            "device_type": sample.device?.model ?? "iPhone"
         ]
     }
 }
