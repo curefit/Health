@@ -55,7 +55,11 @@ class HealthDataPoint {
   /// The metadata for this data point.
   Map<String, dynamic>? metadata;
 
-  /// The type of device, e.g., 'iPhone', 'Watch', etc. Only available on iOS.
+  /// The source of the data, whether from the iPhone or Watch or something else.
+  /// Only available for iOS and Android Health Connect
+  String? deviceModel;
+
+  /// The type of device, e.g., 'iPhone', 'Watch', 'PHONE', 'WATCH', etc.
   String? deviceType;
 
   HealthDataPoint({
@@ -72,6 +76,7 @@ class HealthDataPoint {
     this.recordingMethod = RecordingMethod.unknown,
     this.workoutSummary,
     this.metadata,
+    this.deviceModel,
     this.deviceType,
   }) {
     // set the value to minutes rather than the category
@@ -141,6 +146,7 @@ class HealthDataPoint {
         : Map<String, dynamic>.from(dataPoint['metadata'] as Map);
     final unit = dataTypeToUnit[dataType] ?? HealthDataUnit.UNKNOWN_UNIT;
     final String? uuid = dataPoint["uuid"] as String?;
+    final String? deviceModel = dataPoint["device_model"] as String?;
     final String? deviceType = dataPoint["device_type"] as String?;
 
     // Set WorkoutSummary, if available.
@@ -168,6 +174,7 @@ class HealthDataPoint {
       recordingMethod: RecordingMethod.fromInt(recordingMethod),
       workoutSummary: workoutSummary,
       metadata: metadata,
+      deviceModel: deviceModel,
       deviceType: deviceType,
     );
   }
@@ -204,9 +211,10 @@ class HealthDataPoint {
       sourceName == other.sourceName &&
       recordingMethod == other.recordingMethod &&
       metadata == other.metadata &&
+      deviceModel == other.deviceModel &&
       deviceType == other.deviceType;
 
   @override
   int get hashCode => Object.hash(uuid, value, unit, dateFrom, dateTo, type,
-      sourcePlatform, sourceDeviceId, sourceId, sourceName, metadata, deviceType);
+      sourcePlatform, sourceDeviceId, sourceId, sourceName, metadata, deviceModel, deviceType);
 }

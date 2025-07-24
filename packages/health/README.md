@@ -222,7 +222,8 @@ String sourceId;
 String sourceName;
 RecordingMethod recordingMethod;
 WorkoutSummary? workoutSummary;
-String? deviceType;  // e.g., 'Watch', 'iPhone'
+String? deviceModel; // e.g., 'Watch (John’s Apple Watch)', 'iPhone (John’s iPhone)', 'Samsung SM-R800', etc.
+String? deviceType;  // e.g., 'Watch', 'iPhone', 'WATCH', 'PHONE', etc.
 ```
 
 where a [`HealthValue`](https://pub.dev/documentation/health/latest/health/HealthValue-class.html) can be any type of `AudiogramHealthValue`, `ElectrocardiogramHealthValue`, `ElectrocardiogramVoltageValue`, `NumericHealthValue`, `NutritionHealthValue`, or `WorkoutHealthValue`.
@@ -260,22 +261,23 @@ A `HealthDataPoint` object can be serialized to and from JSON using the `toJson(
 }
 ```
 
-#### Differentiating Data from iPhone vs Apple Watch
+#### Differentiating Data from Phone vs Watch
 
-On iOS, each health data point includes:
-- `deviceType`: The device model only (e.g., 'Watch', 'iPhone').
+On both iOS and Android, each health data point includes:
+- `deviceModel`: A string describing the device model and name (e.g., 'Watch (John’s Apple Watch)', 'iPhone (John’s iPhone)', 'Samsung SM-R800').
+- `deviceType`: The device type (e.g., 'Watch', 'iPhone', 'WATCH', 'PHONE', etc.).
 
-You can use this field to filter or display data based on its originating device. For example:
+You can use these fields to filter or display data based on its originating device. For example:
 
 ```dart
-if (dataPoint.deviceType == 'Watch') {
-  // This data came from an Apple Watch
-} else if (dataPoint.deviceType == 'iPhone') {
-  // This data came from the iPhone
+if (dataPoint.deviceType?.toLowerCase() == 'watch') {
+  // Data from Apple Watch or Wear OS watch
+} else if (dataPoint.deviceType?.toLowerCase() == 'iphone' || dataPoint.deviceType?.toLowerCase() == 'phone') {
+  // Data from iPhone or Android phone
 }
 ```
 
-This field is only available on iOS. On Android, it will be null.
+These fields are available on both iOS and Android (Health Connect). On platforms where device info is not available, they may be 'UNKNOWN' or null.
 
 ### Fetch health data
 
