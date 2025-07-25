@@ -1016,6 +1016,11 @@ class HealthPlugin(private var channel: MethodChannel? = null) :
     // TODO: Find alternative to SOURCE_ID or make it nullable?
     private fun convertRecord(record: Any, dataType: String): List<Map<String, Any?>> {
         val metadata = (record as Record).metadata
+        Log.d("DEVICE_DEBUG", "Device: ${metadata}")
+        Log.d("DEVICE_DEBUG", "Device: ${metadata.device}")
+        Log.d("DEVICE_DEBUG", "Device type: ${metadata.device?.type}")
+        Log.d("DEVICE_DEBUG", "Device model: ${metadata.device?.model}")
+        Log.d("DEVICE_DEBUG", "Device manufacturer: ${metadata.device?.manufacturer}")
         when (record) {
             is WeightRecord ->
                 return listOf(
