@@ -107,23 +107,21 @@ class HealthDataPoint {
               (1000 * 60));
 
   /// Parse device type from string or numeric value
-  static dynamic _parseDeviceType(dynamic deviceTypeData) {
-
+  static HealthDeviceType? _parseDeviceType(dynamic deviceTypeData) {
     if (deviceTypeData == null) {
       return HealthDeviceType.unknown;
     }
 
-    if(Platform.isAndroid && deviceTypeData is int){
+    if (Platform.isAndroid && deviceTypeData is int) {
       return HealthDeviceType.fromValue(deviceTypeData);
     }
 
-    if(Platform.isIOS && deviceTypeData is String){
+    if (Platform.isIOS && deviceTypeData is String) {
       return HealthDeviceType.fromString(deviceTypeData);
     }
 
     return HealthDeviceType.unknown;
   }
-
 
   /// Create a [HealthDataPoint] from json.
   factory HealthDataPoint.fromJson(Map<String, dynamic> json) =>
@@ -160,8 +158,8 @@ class HealthDataPoint {
         DateTime.fromMillisecondsSinceEpoch(dataPoint['date_to'] as int);
     final String sourceId = dataPoint["source_id"] as String;
     final String sourceName = dataPoint["source_name"] as String;
-    final dynamic deviceTypeData = dataPoint["device_type"];
-    final dynamic deviceType = _parseDeviceType(deviceTypeData);
+    final dynamic deviceTypeValue = dataPoint["device_type"];
+    final HealthDeviceType? deviceType = _parseDeviceType(deviceTypeValue);
     final Map<String, dynamic>? metadata = dataPoint["metadata"] == null
         ? null
         : Map<String, dynamic>.from(dataPoint['metadata'] as Map);
@@ -190,7 +188,8 @@ class HealthDataPoint {
       sourceDeviceId: Health().deviceId,
       sourceId: sourceId,
       sourceName: sourceName,
-      deviceTypeValue: deviceType,
+      deviceTypeValue: deviceTypeValue,
+      deviceType: deviceType,
       recordingMethod: RecordingMethod.fromInt(recordingMethod),
       workoutSummary: workoutSummary,
       metadata: metadata,
@@ -231,10 +230,21 @@ class HealthDataPoint {
       metadata == other.metadata;
 
   @override
-  int get hashCode => Object.hash(uuid, value, unit, dateFrom, dateTo, type,
-      sourcePlatform, sourceDeviceId, sourceId, sourceName, 
-      deviceTypeValue is HealthDeviceType ? deviceTypeValue.displayName : deviceTypeValue, metadata);
-
+  int get hashCode => Object.hash(
+      uuid,
+      value,
+      unit,
+      dateFrom,
+      dateTo,
+      type,
+      sourcePlatform,
+      sourceDeviceId,
+      sourceId,
+      sourceName,
+      deviceTypeValue is HealthDeviceType
+          ? deviceTypeValue.displayName
+          : deviceTypeValue,
+      metadata);
 
   /// Get device type as enum (Android only, returns unknown for iOS)
   HealthDeviceType get deviceTypeEnum {
@@ -246,5 +256,6 @@ class HealthDataPoint {
 
   /// Check if device type is from iOS (string) or Android (enum)
   bool get isIOSDeviceType => deviceTypeValue is String;
+
   bool get isAndroidDeviceType => deviceTypeValue is HealthDeviceType;
 }
