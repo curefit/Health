@@ -47,6 +47,33 @@ enum HealthDeviceType {
     );
   }
 
+
+  @override
+  String toString() {
+    switch (this) {
+      case HealthDeviceType.unknown:
+        return "Unknown";
+      case HealthDeviceType.watch:
+        return "Watch";
+      case HealthDeviceType.phone:
+        return "Phone";
+      case HealthDeviceType.scale:
+        return "Scale";
+      case HealthDeviceType.ring:
+        return "Ring";
+      case HealthDeviceType.headMounted:
+        return "Head Mounted";
+      case HealthDeviceType.fitnessBand:
+        return "Fitness Band";
+      case HealthDeviceType.chestStrap:
+        return "Chest Strap";
+      case HealthDeviceType.smartDisplay:
+        return "Smart Display";
+      case HealthDeviceType.ipad:
+        return "iPad";
+    }
+  }
+
   /// Extract device type from device model string
   /// Used to categorize iOS device models into device types
   static HealthDeviceType fromString(String? deviceModel) {
