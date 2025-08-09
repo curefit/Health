@@ -30,6 +30,8 @@ enum AppState {
   PERMISSIONS_REVOKING,
   PERMISSIONS_REVOKED,
   PERMISSIONS_NOT_REVOKED,
+  BACKGROUND_PERMISSION_GRANTED,
+  BACKGROUND_PERMISSION_DENIED,
 }
 
 class _HealthAppState extends State<HealthApp> {
@@ -37,6 +39,8 @@ class _HealthAppState extends State<HealthApp> {
   AppState _state = AppState.DATA_NOT_FETCHED;
   int _nofSteps = 0;
   List<RecordingMethod> recordingMethodsToFilter = [];
+  
+  Widget _contentBackgroundPermission = const Text('');
 
   // All types available depending on platform (iOS ot Android).
   List<HealthDataType> get types => (Platform.isAndroid)
@@ -452,6 +456,52 @@ class _HealthAppState extends State<HealthApp> {
     });
   }
 
+  /// Check and request background permission on Android.
+  Future<void> checkBackgroundPermission() async {
+    assert(Platform.isAndroid, "This is only available on Android");
+
+    try {
+      // First check if we already have the permission
+      final bool? hasPermission = await Health().hasBackgroundPermission();
+      
+      if (hasPermission == true) {
+        setState(() {
+          _contentBackgroundPermission = const Text(
+            'Background permission is already granted!',
+            style: TextStyle(color: Colors.green),
+          );
+          _state = AppState.BACKGROUND_PERMISSION_GRANTED;
+        });
+        return;
+      }
+
+      // If not, request the permission
+      final bool granted = await Health().requestBackgroundPermission();
+      
+      setState(() {
+        _contentBackgroundPermission = Text(
+          granted 
+            ? 'Background permission granted successfully!'
+            : 'Background permission denied. You may need to go to system settings to grant this permission manually.',
+          style: TextStyle(color: granted ? Colors.green : Colors.red),
+        );
+        _state = granted 
+          ? AppState.BACKGROUND_PERMISSION_GRANTED 
+          : AppState.BACKGROUND_PERMISSION_DENIED;
+      });
+
+    } catch (error) {
+      debugPrint("Exception in checkBackgroundPermission: $error");
+      setState(() {
+        _contentBackgroundPermission = Text(
+          'Error checking background permission: $error',
+          style: const TextStyle(color: Colors.red),
+        );
+        _state = AppState.BACKGROUND_PERMISSION_DENIED;
+      });
+    }
+  }
+
   // UI building below
 
   @override
@@ -529,6 +579,14 @@ class _HealthAppState extends State<HealthApp> {
                                 WidgetStatePropertyAll(Colors.blue)),
                         child: const Text("Revoke Access",
                             style: TextStyle(color: Colors.white))),
+                    if (Platform.isAndroid)
+                      TextButton(
+                          onPressed: checkBackgroundPermission,
+                          style: const ButtonStyle(
+                              backgroundColor:
+                                  WidgetStatePropertyAll(Colors.green)),
+                          child: const Text("Background Permission",
+                              style: TextStyle(color: Colors.white))),
                   ]),
               ],
             ),
@@ -743,5 +801,7 @@ class _HealthAppState extends State<HealthApp> {
         AppState.PERMISSIONS_REVOKING => _permissionsRevoking,
         AppState.PERMISSIONS_REVOKED => _permissionsRevoked,
         AppState.PERMISSIONS_NOT_REVOKED => _permissionsNotRevoked,
+        AppState.BACKGROUND_PERMISSION_GRANTED => _contentBackgroundPermission,
+        AppState.BACKGROUND_PERMISSION_DENIED => _contentBackgroundPermission,
       };
 }

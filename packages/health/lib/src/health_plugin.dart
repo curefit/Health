@@ -8,6 +8,8 @@ part of '../health.dart';
 ///
 ///  * Handling permissions to access health data using the [hasPermissions],
 ///    [requestAuthorization], [revokePermissions] methods.
+///  * Handling background permissions using the [hasBackgroundPermission] and
+///    [requestBackgroundPermission] methods (Android only).
 ///  * Reading health data using the [getHealthDataFromTypes] method.
 ///  * Writing health data using the [writeHealthData] method.
 ///  * Cleaning up duplicate data points via the [removeDuplicates] method.
@@ -258,6 +260,49 @@ class Health {
     final bool? isAuthorized = await _channel.invokeMethod(
         'requestAuthorization', {'types': keys, "permissions": mPermissions});
     return isAuthorized ?? false;
+  }
+
+  /// Checks if the app has permission to read health data in the background.
+  ///
+  /// This is required for Health Connect on Android to access health data when
+  /// the app is not in the foreground. Returns true if the permission is granted,
+  /// false otherwise, or null if it cannot be determined.
+  ///
+  /// Android only. On iOS this returns null.
+  Future<bool?> hasBackgroundPermission() async {
+    if (Platform.isIOS) return null;
+
+    await _checkIfHealthConnectAvailableOnAndroid();
+    try {
+      final bool? hasPermission = await _channel.invokeMethod('hasBackgroundPermission');
+      return hasPermission;
+    } catch (e) {
+      debugPrint('$runtimeType - Exception in hasBackgroundPermission(): $e');
+      return null;
+    }
+  }
+
+  /// Requests permission to read health data in the background.
+  ///
+  /// This permission is required for Health Connect on Android to access health
+  /// data when the app is not in the foreground. Returns true if the permission
+  /// is granted successfully, false otherwise.
+  ///
+  /// Note: This permission may require the user to navigate to system settings
+  /// to grant the permission manually.
+  ///
+  /// Android only. On iOS this returns false and does nothing.
+  Future<bool> requestBackgroundPermission() async {
+    if (Platform.isIOS) return false;
+
+    await _checkIfHealthConnectAvailableOnAndroid();
+    try {
+      final bool? isAuthorized = await _channel.invokeMethod('requestBackgroundPermission');
+      return isAuthorized ?? false;
+    } catch (e) {
+      debugPrint('$runtimeType - Exception in requestBackgroundPermission(): $e');
+      return false;
+    }
   }
 
   /// Obtains health and weight if BMI is requested on Android.

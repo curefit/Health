@@ -82,6 +82,9 @@ const val WORKOUT = "WORKOUT"
 
 const val TOTAL_CALORIES_BURNED = "TOTAL_CALORIES_BURNED"
 
+// Background permission constant
+const val READ_HEALTH_DATA_IN_BACKGROUND = "READ_HEALTH_DATA_IN_BACKGROUND"
+
 
 class HealthPlugin(private var channel: MethodChannel? = null) :
     MethodCallHandler, ActivityResultListener, Result, ActivityAware, FlutterPlugin {
@@ -147,7 +150,9 @@ class HealthPlugin(private var channel: MethodChannel? = null) :
             "installHealthConnect" -> installHealthConnect(call, result)
             "getHealthConnectSdkStatus" -> getHealthConnectSdkStatus(call, result)
             "hasPermissions" -> hasPermissions(call, result)
+            "hasBackgroundPermission" -> hasBackgroundPermission(call, result)
             "requestAuthorization" -> requestAuthorization(call, result)
+            "requestBackgroundPermission" -> requestBackgroundPermission(call, result)
             "revokePermissions" -> revokePermissions(call, result)
             "getData" -> getData(call, result)
             "getIntervalData" -> getIntervalData(call, result)
@@ -588,6 +593,29 @@ class HealthPlugin(private var channel: MethodChannel? = null) :
     }
 
     /**
+     * Checks if the app has the background health data permission.
+     */
+    private fun hasBackgroundPermission(call: MethodCall, result: Result) {
+        scope.launch {
+            try {
+                val backgroundPermission = "android.permission.health.READ_HEALTH_DATA_IN_BACKGROUND"
+                val grantedPermissions = healthConnectClient
+                    .permissionController
+                    .getGrantedPermissions()
+                
+                val hasPermission = grantedPermissions.contains(backgroundPermission)
+                
+                Log.i("FLUTTER_HEALTH", "Background permission status: $hasPermission")
+                result.success(hasPermission)
+                
+            } catch (e: Exception) {
+                Log.w("FLUTTER_HEALTH::ERROR", "Error checking background permission: ${e.message}")
+                result.success(false)
+            }
+        }
+    }
+
+    /**
      * Requests authorization for the HealthDataTypes with the the READ or READ_WRITE permission
      * type.
      */
@@ -672,6 +700,40 @@ class HealthPlugin(private var channel: MethodChannel? = null) :
         mResult = result
         isReplySubmitted = false
         healthConnectRequestPermissionsLauncher!!.launch(permList.toSet())
+    }
+
+    /**
+     * Requests authorization for background health data access using the
+     * READ_HEALTH_DATA_IN_BACKGROUND permission.
+     */
+    private fun requestBackgroundPermission(call: MethodCall, result: Result) {
+        if (context == null) {
+            result.success(false)
+            return
+        }
+
+        // Check if Health Connect is available and supports background permission
+        if (healthConnectRequestPermissionsLauncher == null) {
+            result.success(false)
+            Log.i("FLUTTER_HEALTH", "Permission launcher not found")
+            return
+        }
+
+        try {
+            // Create the background permission set
+            val backgroundPermission = setOf("android.permission.health.READ_HEALTH_DATA_IN_BACKGROUND")
+            
+            Log.i("FLUTTER_HEALTH", "Requesting background health data permission")
+            
+            // Store the result to be called in [onHealthConnectPermissionCallback]
+            mResult = result
+            isReplySubmitted = false
+            healthConnectRequestPermissionsLauncher!!.launch(backgroundPermission)
+            
+        } catch (e: Exception) {
+            Log.w("FLUTTER_HEALTH::ERROR", "Error requesting background permission: ${e.message}")
+            result.success(false)
+        }
     }
 
     /** Get all datapoints of the DataType within the given time range */
