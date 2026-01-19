@@ -3,6 +3,25 @@ part of '../health.dart';
 /// Types of health platforms.
 enum HealthPlatformType { appleHealth, googleHealthConnect }
 
+enum DeviceType {
+  unknown,
+  watch,
+  phone,
+  scale,
+  ring,
+  headMounted,
+  fitnessBand,
+  chestStrap,
+  smartDisplay,
+  consumerMedicalDevice,
+  glasses,
+  hearable,
+  fitnessMachine,
+  fitnessEquipment,
+  portableComputer,
+  meter,
+}
+
 /// A [HealthDataPoint] object corresponds to a data point capture from
 /// Apple HealthKit or Google Health Connect with a [HealthValue]
 /// as value.
@@ -115,6 +134,48 @@ class HealthDataPoint {
     HealthDataType dataType,
     dynamic dataPoint,
   ) {
+    DeviceType _deviceTypeFromInt(int? type) {
+      if (type == null) return DeviceType.unknown;
+      switch (type) {
+        case 1:
+          return DeviceType.watch;
+        case 2:
+          return DeviceType.phone;
+        case 3:
+          return DeviceType.scale;
+        case 4:
+          return DeviceType.ring;
+        case 5:
+          return DeviceType.headMounted;
+        case 6:
+          return DeviceType.fitnessBand;
+        case 7:
+          return DeviceType.chestStrap;
+        case 8:
+          return DeviceType.smartDisplay;
+
+        // Extended types — may be present on newer Health Connect versions
+        case 9:
+          return DeviceType.consumerMedicalDevice;
+        case 10:
+          return DeviceType.glasses;
+        case 11:
+          return DeviceType.hearable;
+        case 12:
+          return DeviceType.fitnessMachine;
+        case 13:
+          return DeviceType.fitnessEquipment;
+        case 14:
+          return DeviceType.portableComputer;
+        case 15:
+          return DeviceType.meter;
+
+        case 0:
+        default:
+          return DeviceType.unknown;
+      }
+    }
+
     // Handling different [HealthValue] types
     HealthValue value = switch (dataType) {
       HealthDataType.AUDIOGRAM =>
@@ -143,7 +204,11 @@ class HealthDataPoint {
         : Map<String, dynamic>.from(dataPoint['metadata'] as Map);
     final unit = dataTypeToUnit[dataType] ?? HealthDataUnit.UNKNOWN_UNIT;
     final String? uuid = dataPoint["uuid"] as String?;
-    final String? deviceModel = dataPoint["device_model"] as String?;
+    String? deviceModel = dataPoint["device_model"] as String?;
+    final int? deviceTypeInt = dataPoint["device_type"] as int?;
+    final DeviceType deviceType = _deviceTypeFromInt(deviceTypeInt);
+
+    if (Platform.isAndroid) deviceModel = deviceType.name;
 
     // Set WorkoutSummary, if available.
     WorkoutSummary? workoutSummary;

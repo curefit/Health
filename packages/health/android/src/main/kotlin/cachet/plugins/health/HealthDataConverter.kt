@@ -137,7 +137,8 @@ class HealthDataConverter {
         "uuid" to metadata.id,
         "source_id" to "",
         "source_name" to metadata.dataOrigin.packageName,
-        "recording_method" to metadata.recordingMethod
+        "recording_method" to metadata.recordingMethod,
+        "device_type" to (metadata.device?.type ?: 0)
     )
 
     /**
