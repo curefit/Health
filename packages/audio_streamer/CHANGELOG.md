@@ -1,3 +1,21 @@
+## 5.0.0
+
+* **Breaking:** requires Flutter `>=3.44.0`
+* **Breaking:** raised the minimum iOS deployment target from 8.0 to 16.0 and the Android `minSdk` from 16 to 24
+* Added Swift Package Manager (SPM) support - Fixes [#1299](https://github.com/cph-cachet/flutter-plugins/issues/1299)
+* Added `PrivacyInfo.xcprivacy` privacy manifest
+* Updated Android `compileSdk 36` and Java 17
+* Updated `permission_handler: ^13.0.1`
+* Updated the example app
+* Fix [#975](https://github.com/cph-cachet/flutter-plugins/issues/975)
+
+## 4.3.0
+
+* Fix issue where stream function made a new thread each time a recording starts - Fixes [#1242](https://github.com/cph-cachet/flutter-plugins/issues/1242)
+* Updated Gradle and Kotlin
+* Updated `permission_handler: ^12.0.0`
+* Updated `sdk >=3.8.1`
+
 ## 4.2.2
 
 * Reverts [#1226](https://github.com/cph-cachet/flutter-plugins/pull/1226)
